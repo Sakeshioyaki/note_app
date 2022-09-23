@@ -8,6 +8,7 @@ import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/main.dart';
 import 'package:note_app/model/model.dart';
 
+import 'edit_page.dart';
 import 'note_page.dart';
 
 class NoteListPage extends StatefulWidget {
@@ -142,49 +143,13 @@ class _NoteListPageState extends State<NoteListPage> {
                     borderRadius:
                         BorderRadius.circular(AppDimens.buttonHeight / 2)),
                 child: IconButton(
-                  onPressed: () async {
-                    if (await showDialog<bool>(
-                            context: context,
-                            barrierDismissible: false, // user must tap button!
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Delete note?'),
-                                content: SingleChildScrollView(
-                                  child: ListBody(
-                                    children: const <Widget>[
-                                      Text(
-                                          'Tap \'YES\' to confirm note deletion.'),
-                                    ],
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (context) {
-                                        return const NoteListPage();
-                                      }));
-                                    },
-                                    child: const Text('YES'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                    },
-                                    child: const Text('NO'),
-                                  ),
-                                ],
-                              );
-                            }) ??
-                        false) {
-                      // await noteProvider.deleteNote(widget.noteId);
-                      // Pop twice to go back to the list
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).pop();
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).pop();
-                    }
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return const EditNotePage(
+                        initialNote: null,
+                      );
+                    }));
                   },
                   icon: SvgPicture.asset('assets/icons/ic_add.svg',
                       color: Colors.white),

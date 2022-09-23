@@ -19,6 +19,8 @@ class AppTextStyle {
   //s14
   static final textLightPlaceholderS14 =
       textLightPlaceholder.copyWith(fontSize: 14);
+  static final textLightPlaceholderS24 =
+      textLightPlaceholder.copyWith(fontSize: 24, fontWeight: FontWeight.bold);
 
   //s14
   static final textDarkPrimaryS14 = textDarkPrimary.copyWith(fontSize: 14);

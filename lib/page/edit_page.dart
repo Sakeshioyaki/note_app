@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/main.dart';
 import 'package:note_app/model/model.dart';
 
@@ -163,9 +164,10 @@ class _EditNotePageState extends State<EditNotePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Title',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: 'Write title here ...',
+                          labelStyle: AppTextStyle.textLightPlaceholderS24,
+                          border: InputBorder.none,
                         ),
                         controller: _titleTextController,
                         validator: (val) =>
@@ -176,8 +178,8 @@ class _EditNotePageState extends State<EditNotePage> {
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
-                          labelText: 'Content',
-                          border: OutlineInputBorder(),
+                          labelText: 'Write content here ...',
+                          border: InputBorder.none,
                         ),
                         controller: _contentTextController,
                         validator: (val) => val!.isNotEmpty
