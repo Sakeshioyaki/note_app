@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:note_app/common/app_colors.dart';
+import 'package:note_app/common/app_dimens.dart';
 import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/main.dart';
 import 'package:note_app/model/model.dart';
@@ -96,64 +99,6 @@ class _EditNotePageState extends State<EditNotePage> {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Edit Note',
-          ),
-          actions: <Widget>[
-            if (_noteId != null)
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () async {
-                  if (await showDialog<bool>(
-                          context: context,
-                          barrierDismissible: false, // user must tap button!
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Delete note?'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: const <Widget>[
-                                    Text(
-                                        'Tap \'YES\' to confirm note deletion.'),
-                                  ],
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
-                                  },
-                                  child: const Text('YES'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(false);
-                                  },
-                                  child: const Text('NO'),
-                                ),
-                              ],
-                            );
-                          }) ??
-                      false) {
-                    await noteProvider.deleteNote(widget.initialNote!.id.v);
-                    // Pop twice to go back to the list
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            // action button
-            IconButton(
-              icon: const Icon(Icons.save_alt),
-              onPressed: () {
-                save();
-              },
-            ),
-          ],
-        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(children: <Widget>[
@@ -173,13 +118,19 @@ class _EditNotePageState extends State<EditNotePage> {
                         validator: (val) =>
                             val!.isNotEmpty ? null : 'Title must not be empty',
                       ),
-                      const SizedBox(
-                        height: 16,
+                      Text(
+                        '13 Mar 2022 19:02 WIB',
+                        style: AppTextStyle.textLightPlaceholderS12,
                       ),
                       TextFormField(
+                        // textAlignVertical: TextAlignVertical.top,
+                        textAlign: TextAlign.start,
                         decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(10.0),
                           labelText: 'Write content here ...',
                           border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.black12,
                         ),
                         controller: _contentTextController,
                         validator: (val) => val!.isNotEmpty
@@ -190,6 +141,55 @@ class _EditNotePageState extends State<EditNotePage> {
                       )
                     ]))
           ]),
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  height: AppDimens.buttonHeight,
+                  width: AppDimens.buttonHeight,
+                  decoration: BoxDecoration(
+                      color: AppColors.redAccent,
+                      borderRadius:
+                          BorderRadius.circular(AppDimens.buttonHeight / 2)),
+                  child: IconButton(
+                    onPressed: () {
+                      listPageState.setDeleting();
+                    },
+                    icon: SvgPicture.asset('assets/icons/ic_trash.svg',
+                        color: Colors.white),
+                  ),
+                ),
+                const SizedBox(
+                  width: 24,
+                ),
+                Container(
+                  height: AppDimens.buttonHeight,
+                  width: AppDimens.buttonHeight,
+                  decoration: BoxDecoration(
+                      color: AppColors.greenAccent,
+                      borderRadius:
+                          BorderRadius.circular(AppDimens.buttonHeight / 2)),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return const EditNotePage(
+                          initialNote: null,
+                        );
+                      }));
+                    },
+                    icon: SvgPicture.asset('assets/icons/ic_add.svg',
+                        color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
