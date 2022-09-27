@@ -25,165 +25,216 @@ class _NoteListPageState extends State<NoteListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder(
-      stream: listPageState.isDeletingStream,
-      builder: (cont, snapshot) {
-        return StreamBuilder(
-          stream: listPageState.listIdDeletingStream,
+      body: StreamBuilder(
+          stream: listPageState.textSearchStream,
           builder: (cont, snapshot) {
-            return Scaffold(
-                body: StreamBuilder<List<DbNote?>>(
-                    stream: noteProvider.onNotes(),
-                    builder: (context, snapshot) {
-                      var notes = snapshot.data;
-                      if (notes == null) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return SafeArea(
-                        child: Column(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 30),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'My Notes',
-                                    style: AppTextStyle.textDarkPrimaryS36Bold,
-                                  ),
-                                  buildSearch(),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 24, bottom: 10),
-                                    child: Text(
-                                      'Note List',
-                                      style:
-                                          AppTextStyle.textDarkPrimaryS24Bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                  itemCount: notes.length,
-                                  itemBuilder: (context, index) {
-                                    var note = notes[index]!;
-                                    print(listPageState.listIdDeleting);
-                                    print('index : ${note.id.v}');
-                                    bool acceptDelete = false;
-                                    for (var element
-                                        in listPageState.listIdDeleting) {
-                                      {
-                                        element == note.id.v
-                                            ? (acceptDelete = true)
-                                            : (acceptDelete = false);
-                                        print(element);
-                                      }
-                                    }
-                                    print('accep ? ${acceptDelete.toString()}');
-
-                                    return buildListCard(
-                                        isDeleting: listPageState.isDeleting,
-                                        acceptDelete: acceptDelete,
-                                        note: note);
-                                  }),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                floatingActionButton: listPageState.isDeleting
-                    ? Container(
-                        height: AppDimens.buttonHeight,
-                        width: AppDimens.buttonHeight,
-                        decoration: BoxDecoration(
-                            color: AppColors.redAccent,
-                            borderRadius: BorderRadius.circular(
-                                AppDimens.buttonHeight / 2)),
-                        child: IconButton(
-                          onPressed: () {
-                            // listPageState.setDeleting();
-                            listPageState.setDeleting();
-                          },
-                          icon: Image.asset(
-                            'assets/icons/ic_done.png',
-                            height: 24,
-                          ),
-                        ),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                height: AppDimens.buttonHeight,
-                                width: AppDimens.buttonHeight,
-                                decoration: BoxDecoration(
-                                    color: AppColors.redAccent,
-                                    borderRadius: BorderRadius.circular(
-                                        AppDimens.buttonHeight / 2)),
-                                child: IconButton(
-                                  onPressed: () {
-                                    listPageState.setDeleting();
-                                  },
-                                  icon: SvgPicture.asset(
-                                      'assets/icons/ic_trash.svg',
-                                      color: Colors.white),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 24,
-                              ),
-                              Container(
-                                height: AppDimens.buttonHeight,
-                                width: AppDimens.buttonHeight,
-                                decoration: BoxDecoration(
-                                    color: AppColors.greenAccent,
-                                    borderRadius: BorderRadius.circular(
-                                        AppDimens.buttonHeight / 2)),
-                                child: IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(builder: (context) {
-                                      return const EditNotePage(
-                                        initialNote: null,
+            return StreamBuilder(
+                stream: listPageState.isSearchingStream,
+                builder: (cont, snapshot) {
+                  return StreamBuilder(
+                    stream: listPageState.isDeletingStream,
+                    builder: (cont, snapshot) {
+                      return StreamBuilder(
+                        stream: listPageState.listIdDeletingStream,
+                        builder: (cont, snapshot) {
+                          return Scaffold(
+                              body: StreamBuilder<List<DbNote?>>(
+                                  stream: noteProvider.onNotes(),
+                                  builder: (context, snapshot) {
+                                    var notes = snapshot.data;
+                                    if (notes == null) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
                                       );
-                                    }));
-                                  },
-                                  icon: SvgPicture.asset(
-                                      'assets/icons/ic_add.svg',
-                                      color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ));
-          },
-        );
-      },
-    ));
+                                    }
+                                    return SafeArea(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'My Notes',
+                                                  style: AppTextStyle
+                                                      .textDarkPrimaryS36Bold,
+                                                ),
+                                                buildSearch(listPageState),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 24, bottom: 10),
+                                                  child: Text(
+                                                    'Note List',
+                                                    style: AppTextStyle
+                                                        .textDarkPrimaryS24Bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          listPageState.isSearching
+                                              ? Expanded(
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 30),
+                                                    child: buildListSearch(
+                                                        notes,
+                                                        listPageState
+                                                            .textSearch),
+                                                  ),
+                                                )
+                                              : Expanded(
+                                                  child: ListView.builder(
+                                                      itemCount: notes.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        var note =
+                                                            notes[index]!;
+                                                        print(listPageState
+                                                            .listIdDeleting);
+                                                        print(
+                                                            'index : ${note.id.v}');
+                                                        bool acceptDelete =
+                                                            false;
+                                                        for (var element
+                                                            in listPageState
+                                                                .listIdDeleting) {
+                                                          {
+                                                            element == note.id.v
+                                                                ? (acceptDelete =
+                                                                    true)
+                                                                : (acceptDelete =
+                                                                    false);
+                                                            print(element);
+                                                          }
+                                                        }
+                                                        print(
+                                                            'accep ? ${acceptDelete.toString()}');
+
+                                                        return buildListCard(
+                                                            acceptDelete,
+                                                            listPageState
+                                                                .isDeleting,
+                                                            note: note);
+                                                      }),
+                                                ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                              floatingActionButton: listPageState.isDeleting
+                                  ? Container(
+                                      height: AppDimens.buttonHeight,
+                                      width: AppDimens.buttonHeight,
+                                      decoration: BoxDecoration(
+                                          color: AppColors.redAccent,
+                                          borderRadius: BorderRadius.circular(
+                                              AppDimens.buttonHeight / 2)),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          // listPageState.setDeleting();
+                                          listPageState.setDeleting();
+                                        },
+                                        icon: Image.asset(
+                                          'assets/icons/ic_done.png',
+                                          height: 24,
+                                        ),
+                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                              height: AppDimens.buttonHeight,
+                                              width: AppDimens.buttonHeight,
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.redAccent,
+                                                  borderRadius: BorderRadius
+                                                      .circular(AppDimens
+                                                              .buttonHeight /
+                                                          2)),
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  listPageState.setDeleting();
+                                                },
+                                                icon: SvgPicture.asset(
+                                                    'assets/icons/ic_trash.svg',
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 24,
+                                            ),
+                                            Container(
+                                              height: AppDimens.buttonHeight,
+                                              width: AppDimens.buttonHeight,
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.greenAccent,
+                                                  borderRadius: BorderRadius
+                                                      .circular(AppDimens
+                                                              .buttonHeight /
+                                                          2)),
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return const EditNotePage(
+                                                      initialNote: null,
+                                                    );
+                                                  }));
+                                                },
+                                                icon: SvgPicture.asset(
+                                                    'assets/icons/ic_add.svg',
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ));
+                        },
+                      );
+                    },
+                  );
+                });
+          }),
+    );
   }
 
-  Widget buildListCard(
-      {required DbNote note,
-      required bool isDeleting,
-      required bool acceptDelete}) {
+  ListView buildListSearch(List<DbNote?> notes, String textSearch) {
+    return ListView.builder(
+        itemCount: notes.length,
+        itemBuilder: (context, index) {
+          var note = notes[index]!;
+          print(listPageState.listIdDeleting);
+          print('index : ${note.id.v}');
+
+          return Text('this text search ${textSearch}');
+        });
+  }
+
+  Widget buildListCard(bool? acceptDelete, bool? isDeleting,
+      {required DbNote note}) {
     return Padding(
         padding: const EdgeInsets.only(left: 30, right: 30, top: 18),
         child: buildCard(note, context, isDeleting, acceptDelete));
   }
 
   Widget buildCard(
-      DbNote note, BuildContext context, bool isDeleting, bool acceptDelete) {
+      DbNote note, BuildContext context, bool? isDeleting, bool? acceptDelete) {
     return Column(
       children: [
         Container(
@@ -224,7 +275,7 @@ class _NoteListPageState extends State<NoteListPage> {
             ),
           ),
         ),
-        isDeleting
+        (isDeleting ?? false)
             ? (acceptDelete == true
                 ? SizedBox(
                     width: double.infinity,
@@ -297,7 +348,7 @@ class _NoteListPageState extends State<NoteListPage> {
   }
 }
 
-Widget buildSearch() {
+Widget buildSearch(ListPageState listPageState) {
   return Padding(
     padding: const EdgeInsets.only(top: 24),
     child: TextField(
@@ -324,7 +375,17 @@ Widget buildSearch() {
         alignLabelWithHint: false,
       ),
       style: AppTextStyle.textLightPlaceholderS14,
-      onTap: () => {},
+      // onTap: (text) {},
+      onChanged: (text) {
+        if (listPageState.isSearching == false) {
+          listPageState.setSearching();
+        }
+        if (text == '')
+          listPageState.setSearching();
+        else {
+          listPageState.setTextSearch(text);
+        }
+      },
     ),
   );
 }

@@ -73,6 +73,7 @@ class _EditNotePageState extends State<EditNotePage> {
                               border: InputBorder.none,
                             ),
                             controller: _titleTextController,
+                            style: AppTextStyle.textDarkPrimaryS24Bold,
                             validator: (val) => val!.isNotEmpty
                                 ? null
                                 : 'Title must not be empty',
@@ -97,6 +98,7 @@ class _EditNotePageState extends State<EditNotePage> {
                                 : 'Description must not be empty',
                             keyboardType: TextInputType.multiline,
                             maxLines: 5,
+                            style: AppTextStyle.textDarkPrimaryS14,
                           )
                         ]))
               ]),

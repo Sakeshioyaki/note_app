@@ -202,6 +202,18 @@ class DbNoteProvider {
     return DbNotes(list);
   }
 
+  /// Don't read all fields
+  Future<DbNotes> getListSearch(
+      {int? offset, int? limit, bool? descending}) async {
+    // devPrint('fetching $offset $limit');
+    var list = (await db!.query(tableNotes,
+        columns: [columnId, columnTitle, columnContent],
+        orderBy: '$columnUpdated ${(descending ?? false) ? 'ASC' : 'DESC'}',
+        limit: limit,
+        offset: offset));
+    return DbNotes(list);
+  }
+
   Future clearAllNotes() async {
     await db!.delete(tableNotes);
     _triggerUpdate();

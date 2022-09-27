@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_dimens.dart';
 import 'package:note_app/common/app_text_styles.dart';
@@ -53,10 +54,11 @@ class _NotePageState extends State<NotePage> {
                       style: AppTextStyle.textDarkPrimaryS24Bold,
                     )),
                     ListTile(
-                        title: Text(
-                      '13 Mar 2022 19:02 WIB',
-                      style: AppTextStyle.textLightPlaceholderS12,
-                    )),
+                      title: Text(
+                        DateFormat('dd MMM y    h:mm a').format(DateTime.now()),
+                        style: AppTextStyle.textLightPlaceholderS12,
+                      ),
+                    ),
                     ListTile(
                         title: Text(
                       note.content.v ?? '',
