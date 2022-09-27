@@ -28,10 +28,10 @@ class EditNotePageState extends State<EditNotePage> {
   @override
   void initState() {
     super.initState();
-    _titleTextController = TextEditingController(
-        text: widget.initialNote?.title.v ?? 'Write title here ...');
-    _contentTextController = TextEditingController(
-        text: widget.initialNote?.content.v ?? 'Write content here ...');
+    _titleTextController =
+        TextEditingController(text: widget.initialNote?.title.v);
+    _contentTextController =
+        TextEditingController(text: widget.initialNote?.content.v);
   }
 
   Future save() async {
@@ -75,7 +75,10 @@ class EditNotePageState extends State<EditNotePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               TextFormField(
-                decoration: const InputDecoration(border: InputBorder.none),
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Write title here ...',
+                    hintStyle: AppTextStyle.textLightPlaceholder),
                 controller: _titleTextController,
                 style: AppTextStyle.textDarkPrimaryS24Bold,
                 validator: (val) =>
@@ -88,6 +91,8 @@ class EditNotePageState extends State<EditNotePage> {
               TextFormField(
                 textAlign: TextAlign.start,
                 decoration: const InputDecoration(
+                  hintText: 'Write content here ...',
+                  hintStyle: AppTextStyle.textLightPlaceholder,
                   contentPadding: EdgeInsets.all(10.0),
                   border: InputBorder.none,
                   filled: true,

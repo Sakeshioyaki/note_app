@@ -131,7 +131,7 @@ class DbNoteProvider {
 
   Future<void> deleteNote(int? id) async {
     await db!.delete(AppConst.tableNotes,
-        where: '${AppConst.columnId} = ?', whereArgs: <Object?>[id]);
+        where: '${AppConst.columnId} = ?', whereArgs: [id]);
     _triggerUpdate();
   }
 

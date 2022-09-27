@@ -255,7 +255,7 @@ class ListNotePageState extends State<ListNotePage> {
   }) {
     return Column(
       children: [
-        buildContent(note),
+        buildContent(note, listPageState.isDeleting),
         (isDeleting ?? false)
             ? (acceptDelete == true
                 ? SizedBox(
@@ -327,14 +327,16 @@ class ListNotePageState extends State<ListNotePage> {
     );
   }
 
-  Widget buildContent(DbNote note) {
+  Widget buildContent(DbNote note, bool isDeleting) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.lightBackground,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
+        borderRadius: isDeleting
+            ? const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              )
+            : const BorderRadius.all(Radius.circular(8)),
       ),
       child: InkWell(
         onTap: () {
@@ -401,10 +403,9 @@ Widget buildSearch(ListNoteProvider listPageState) {
           child: SvgPicture.asset(
             AppImages.icSearch,
             height: 18,
-            semanticsLabel: 'A red up arrow',
           ),
         ),
-        hintText: 'Search',
+        hintText: 'Search your note’s title here ...',
         hintStyle: AppTextStyle.textLightPlaceholderS14,
         helperStyle: AppTextStyle.textLightPlaceholderS14,
         alignLabelWithHint: false,
