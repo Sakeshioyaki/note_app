@@ -81,8 +81,10 @@ class _NoteListPageState extends State<NoteListPage> {
                                                 child: Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 30),
-                                                  child: buildListSearch(notes,
-                                                      listPageState.textSearch),
+                                                  child: buildListSearch(
+                                                      textSearch: listPageState
+                                                          .textSearch,
+                                                      notes: notes),
                                                 ),
                                               )
                                             : Expanded(
@@ -123,7 +125,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                   );
                                 }),
                             floatingActionButton: listPageState.isSearching
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : (listPageState.isDeleting
                                     ? Container(
                                         height: AppDimens.buttonHeight,
@@ -213,15 +215,23 @@ class _NoteListPageState extends State<NoteListPage> {
     );
   }
 
-  ListView buildListSearch(List<DbNote?> notes, String textSearch) {
+  ListView buildListSearch(
+      {required String textSearch, required List<DbNote?> notes}) {
+    List<DbNote?> resultSearch = [];
+    for (var e in notes) {
+      if (e!.title.v!.contains(textSearch) ||
+          e.content.v!.contains(textSearch)) {
+        resultSearch.add(e);
+      }
+    }
     return ListView.builder(
-        itemCount: notes.length,
+        itemCount: resultSearch.length,
         itemBuilder: (context, index) {
-          var note = notes[index]!;
+          var note = resultSearch[index]!;
           print(listPageState.listIdDeleting);
           print('index : ${note.id.v}');
 
-          return Text('this text search ${textSearch}');
+          return buildCard(false, false, note: note, context: context);
         });
   }
 
@@ -229,11 +239,12 @@ class _NoteListPageState extends State<NoteListPage> {
       {required DbNote note}) {
     return Padding(
         padding: const EdgeInsets.only(left: 30, right: 30, top: 18),
-        child: buildCard(note, context, isDeleting, acceptDelete));
+        child:
+            buildCard(isDeleting, acceptDelete, note: note, context: context));
   }
 
-  Widget buildCard(
-      DbNote note, BuildContext context, bool? isDeleting, bool? acceptDelete) {
+  Widget buildCard(bool? isDeleting, bool? acceptDelete,
+      {required DbNote note, required BuildContext context}) {
     return Column(
       children: [
         Container(
