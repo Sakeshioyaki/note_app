@@ -107,6 +107,7 @@ class ListNotePageState extends State<ListNotePage> {
   }
 
   Widget buildListCardNote(List<DbNote?> notes) {
+    print('list editing ... ${listPageState.listIdDeleting}');
     return Expanded(
       child: ListView.builder(
         itemCount: notes.length,
@@ -115,11 +116,12 @@ class ListNotePageState extends State<ListNotePage> {
           bool acceptDelete = false;
           for (var element in listPageState.listIdDeleting) {
             {
-              element == note.id.v
-                  ? (acceptDelete = true)
-                  : (acceptDelete = false);
+              if (element == note.id.v) (acceptDelete = true);
             }
+            // print('index : ${element} - ${note.id.v}-  ${acceptDelete}');
           }
+
+          print('index : ${index} - ${note.id.v}-  ${acceptDelete}');
           return buildListCard(
             acceptDelete,
             listPageState.isDeleting,

@@ -35,11 +35,13 @@ class ListNoteProvider {
 
   void addListDeleting(int? id) {
     listIdDeleting.add(id ?? -1);
+    print('lít editing ${listIdDeleting}');
     listIdDeletingController.sink.add(listIdDeleting);
   }
 
   void removeListDeleting(int? id) {
     listIdDeleting.remove(id);
+    print('lít editing ${listIdDeleting}');
     listIdDeletingController.sink.add(listIdDeleting);
   }
 }

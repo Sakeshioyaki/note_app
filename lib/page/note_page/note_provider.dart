@@ -200,7 +200,6 @@ class DbNoteProvider {
   /// Don't read all fields
   Future<DbNotes> getListNotes(
       {int? offset, int? limit, bool? descending}) async {
-    // devPrint('fetching $offset $limit');
     var list = (await db!.query(AppConst.tableNotes,
         columns: [
           AppConst.columnId,
@@ -211,27 +210,6 @@ class DbNoteProvider {
             '${AppConst.columnUpdated} ${(descending ?? false) ? 'ASC' : 'DESC'}',
         limit: limit,
         offset: offset));
-    return DbNotes(list);
-  }
-
-  /// Don't read all fields
-  Future<DbNotes> getListSearch({
-    int? offset,
-    int? limit,
-    bool? descending,
-  }) async {
-    var list = (await db!.query(
-      AppConst.tableNotes,
-      columns: [
-        AppConst.columnId,
-        AppConst.columnTitle,
-        AppConst.columnContent
-      ],
-      orderBy:
-          '${AppConst.columnUpdated} ${(descending ?? false) ? 'ASC' : 'DESC'}',
-      limit: limit,
-      offset: offset,
-    ));
     return DbNotes(list);
   }
 

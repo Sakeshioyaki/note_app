@@ -95,7 +95,6 @@ class EditNotePageState extends State<EditNotePage> {
                   hintStyle: AppTextStyle.textLightPlaceholder,
                   contentPadding: EdgeInsets.all(10.0),
                   border: InputBorder.none,
-                  filled: true,
                 ),
                 controller: _contentTextController,
                 validator: (val) =>
