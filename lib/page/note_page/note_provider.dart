@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
+import 'package:note_app/common/app_const.dart';
 import 'package:note_app/model/model.dart';
-import 'package:note_app/model/model_constant.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -45,12 +45,12 @@ class DbNoteProvider {
   Future openPath(String path) async {
     db = await dbFactory.openDatabase(path,
         options: OpenDatabaseOptions(
-            version: kVersion1,
+            version: AppConst.kVersion1,
             onCreate: (db, version) async {
               await _createDb(db);
             },
             onUpgrade: (db, oldVersion, newVersion) async {
-              if (oldVersion < kVersion1) {
+              if (oldVersion < AppConst.kVersion1) {
                 await _createDb(db);
               }
             }));
@@ -68,9 +68,14 @@ class DbNoteProvider {
       });
 
   Future<DbNote?> getNote(int? id) async {
-    var list = (await db!.query(tableNotes,
-        columns: [columnId, columnTitle, columnContent, columnUpdated],
-        where: '$columnId = ?',
+    var list = (await db!.query(AppConst.tableNotes,
+        columns: [
+          AppConst.columnId,
+          AppConst.columnTitle,
+          AppConst.columnContent,
+          AppConst.columnUpdated
+        ],
+        where: '${AppConst.columnId} = ?',
         whereArgs: <Object?>[id]));
     if (list.isNotEmpty) {
       return DbNote()..fromMap(list.first);
@@ -79,11 +84,11 @@ class DbNoteProvider {
   }
 
   Future _createDb(Database db) async {
-    await db.execute('DROP TABLE If EXISTS $tableNotes');
+    await db.execute('DROP TABLE If EXISTS ${AppConst.tableNotes}');
     await db.execute(
-        'CREATE TABLE $tableNotes($columnId INTEGER PRIMARY KEY, $columnTitle TEXT, $columnContent TEXT, $columnUpdated INTEGER)');
-    await db
-        .execute('CREATE INDEX NotesUpdated ON $tableNotes ($columnUpdated)');
+        'CREATE TABLE ${AppConst.tableNotes}(${AppConst.columnId} INTEGER PRIMARY KEY, ${AppConst.columnTitle} TEXT, ${AppConst.columnContent} TEXT, ${AppConst.columnUpdated} INTEGER)');
+    await db.execute(
+        'CREATE INDEX NotesUpdated ON ${AppConst.tableNotes} (${AppConst.columnUpdated})');
     await _saveNote(
         db,
         DbNote()
@@ -102,7 +107,7 @@ class DbNoteProvider {
   }
 
   Future open() async {
-    await openPath(await fixPath(dbName));
+    await openPath(await fixPath(AppConst.dbName));
   }
 
   Future<String> fixPath(String path) async => path;
@@ -110,10 +115,12 @@ class DbNoteProvider {
   /// Add or update a note
   Future _saveNote(DatabaseExecutor? db, DbNote updatedNote) async {
     if (updatedNote.id.v != null) {
-      await db!.update(tableNotes, updatedNote.toMap(),
-          where: '$columnId = ?', whereArgs: <Object?>[updatedNote.id.v]);
+      await db!.update(AppConst.tableNotes, updatedNote.toMap(),
+          where: '${AppConst.columnId} = ?',
+          whereArgs: <Object?>[updatedNote.id.v]);
     } else {
-      updatedNote.id.v = await db!.insert(tableNotes, updatedNote.toMap());
+      updatedNote.id.v =
+          await db!.insert(AppConst.tableNotes, updatedNote.toMap());
     }
   }
 
@@ -123,8 +130,8 @@ class DbNoteProvider {
   }
 
   Future<void> deleteNote(int? id) async {
-    await db!
-        .delete(tableNotes, where: '$columnId = ?', whereArgs: <Object?>[id]);
+    await db!.delete(AppConst.tableNotes,
+        where: '${AppConst.columnId} = ?', whereArgs: <Object?>[id]);
     _triggerUpdate();
   }
 
@@ -194,28 +201,42 @@ class DbNoteProvider {
   Future<DbNotes> getListNotes(
       {int? offset, int? limit, bool? descending}) async {
     // devPrint('fetching $offset $limit');
-    var list = (await db!.query(tableNotes,
-        columns: [columnId, columnTitle, columnContent],
-        orderBy: '$columnUpdated ${(descending ?? false) ? 'ASC' : 'DESC'}',
+    var list = (await db!.query(AppConst.tableNotes,
+        columns: [
+          AppConst.columnId,
+          AppConst.columnTitle,
+          AppConst.columnContent
+        ],
+        orderBy:
+            '${AppConst.columnUpdated} ${(descending ?? false) ? 'ASC' : 'DESC'}',
         limit: limit,
         offset: offset));
     return DbNotes(list);
   }
 
   /// Don't read all fields
-  Future<DbNotes> getListSearch(
-      {int? offset, int? limit, bool? descending}) async {
-    // devPrint('fetching $offset $limit');
-    var list = (await db!.query(tableNotes,
-        columns: [columnId, columnTitle, columnContent],
-        orderBy: '$columnUpdated ${(descending ?? false) ? 'ASC' : 'DESC'}',
-        limit: limit,
-        offset: offset));
+  Future<DbNotes> getListSearch({
+    int? offset,
+    int? limit,
+    bool? descending,
+  }) async {
+    var list = (await db!.query(
+      AppConst.tableNotes,
+      columns: [
+        AppConst.columnId,
+        AppConst.columnTitle,
+        AppConst.columnContent
+      ],
+      orderBy:
+          '${AppConst.columnUpdated} ${(descending ?? false) ? 'ASC' : 'DESC'}',
+      limit: limit,
+      offset: offset,
+    ));
     return DbNotes(list);
   }
 
   Future clearAllNotes() async {
-    await db!.delete(tableNotes);
+    await db!.delete(AppConst.tableNotes);
     _triggerUpdate();
   }
 
@@ -224,6 +245,6 @@ class DbNoteProvider {
   }
 
   Future deleteDb() async {
-    await dbFactory.deleteDatabase(await fixPath(dbName));
+    await dbFactory.deleteDatabase(await fixPath(AppConst.dbName));
   }
 }

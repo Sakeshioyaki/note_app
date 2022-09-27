@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class ListPageState {
+class ListNoteProvider {
   bool isDeleting = false;
   StreamController isDeletingController = StreamController<bool>.broadcast();
   Stream get isDeletingStream => isDeletingController.stream;
@@ -20,33 +20,26 @@ class ListPageState {
 
   void setTextSearch(text) {
     textSearch = text;
-    print(textSearch);
     textSearchController.sink.add(textSearch);
   }
 
   void setDeleting() {
     isDeleting = isDeleting ? false : true;
-    print(isDeleting);
     isDeletingController.sink.add(isDeleting);
   }
 
   void setSearching() {
     isSearching = isSearching ? false : true;
-    print(isSearching);
     isSearchingController.sink.add(isSearching);
   }
 
   void addListDeleting(int? id) {
     listIdDeleting.add(id ?? -1);
-    print('addd ..... {$id}');
-    print(listIdDeleting);
     listIdDeletingController.sink.add(listIdDeleting);
   }
 
   void removeListDeleting(int? id) {
-    print('deleting ..... {$id}');
     listIdDeleting.remove(id);
-    print(listIdDeleting);
     listIdDeletingController.sink.add(listIdDeleting);
   }
 }

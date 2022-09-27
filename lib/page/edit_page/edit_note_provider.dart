@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class EditPageState {
+class EditNoteProvider {
   bool needAccept = false;
   StreamController needAcceptController = StreamController<bool>.broadcast();
   Stream get needAcceptStream => needAcceptController.stream;
@@ -12,7 +12,6 @@ class EditPageState {
 
   void setAccept() {
     needAccept = needAccept ? false : true;
-    print(needAccept);
     needAcceptController.sink.add(needAccept);
   }
 }

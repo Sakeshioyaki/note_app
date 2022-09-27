@@ -5,12 +5,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_dimens.dart';
+import 'package:note_app/common/app_images.dart';
 import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/main.dart';
 import 'package:note_app/model/model.dart';
-import 'package:note_app/page/edit_page.dart';
+import 'package:note_app/page/edit_page/edit_note_page.dart';
 
-import 'list_page.dart';
+import '../list_note_page/list_note_page.dart';
 
 class NotePage extends StatefulWidget {
   final int? noteId;
@@ -18,26 +19,29 @@ class NotePage extends StatefulWidget {
   const NotePage({Key? key, required this.noteId}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _NotePageState createState() => _NotePageState();
+  NotePageState createState() => NotePageState();
 }
 
-class _NotePageState extends State<NotePage> {
+class NotePageState extends State<NotePage> {
   late bool isEditing = false;
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DbNote?>(
       stream: noteProvider.onNote(widget.noteId),
       builder: (context, snapshot) {
         var note = snapshot.data;
-
         void edit() {
           if (note != null) {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return EditNotePage(
-                initialNote: note,
-              );
-            }));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return EditNotePage(
+                    initialNote: note,
+                  );
+                },
+              ),
+            );
           }
         }
 
@@ -71,22 +75,23 @@ class _NotePageState extends State<NotePage> {
             children: [
               Row(
                 children: [
-                  SizedBox(
-                    width: 40,
-                  ),
+                  SizedBox(width: 40),
                   Container(
                     height: AppDimens.buttonHeight,
                     width: AppDimens.buttonHeight,
                     decoration: BoxDecoration(
-                        color: AppColors.darkPrimary,
-                        borderRadius:
-                            BorderRadius.circular(AppDimens.buttonHeight / 2)),
+                      color: AppColors.darkPrimary,
+                      borderRadius:
+                          BorderRadius.circular(AppDimens.buttonHeight / 2),
+                    ),
                     child: IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: SvgPicture.asset('assets/icons/ic_back.svg',
-                          color: Colors.white),
+                      icon: SvgPicture.asset(
+                        AppImages.icBack,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -113,7 +118,8 @@ class _NotePageState extends State<NotePage> {
                                       child: ListBody(
                                         children: const <Widget>[
                                           Text(
-                                              'Tap \'YES\' to confirm note deletion.'),
+                                            'Tap \'YES\' to confirm note deletion.',
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -122,10 +128,11 @@ class _NotePageState extends State<NotePage> {
                                         onPressed: () {
                                           Navigator.of(context).pop(true);
                                           Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return NoteListPage();
-                                          }));
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return ListNotePage();
+                                            }),
+                                          );
                                         },
                                         child: Text('YES'),
                                       ),
@@ -140,34 +147,31 @@ class _NotePageState extends State<NotePage> {
                                 }) ??
                             false) {
                           await noteProvider.deleteNote(widget.noteId);
-                          // Pop twice to go back to the list
-                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
-                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         }
                       },
-                      icon: SvgPicture.asset('assets/icons/ic_trash.svg',
-                          color: Colors.white),
+                      icon: SvgPicture.asset(
+                        AppImages.icTrash,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    width: 24,
-                  ),
+                  SizedBox(width: 24),
                   Container(
                     height: AppDimens.buttonHeight,
                     width: AppDimens.buttonHeight,
                     decoration: BoxDecoration(
-                        color: AppColors.greenAccent,
-                        borderRadius:
-                            BorderRadius.circular(AppDimens.buttonHeight / 2)),
+                      color: AppColors.greenAccent,
+                      borderRadius: BorderRadius.circular(
+                        AppDimens.buttonHeight / 2,
+                      ),
+                    ),
                     child: IconButton(
                       onPressed: () {
                         edit();
                       },
-                      icon: SvgPicture.asset(
-                        'assets/icons/ic_edit.svg',
-                      ),
+                      icon: SvgPicture.asset(AppImages.icEdit),
                     ),
                   ),
                 ],
