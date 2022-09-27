@@ -116,71 +116,92 @@ class _EditNotePageState extends State<EditNotePage> {
                     child: IconButton(
                       onPressed: () async {
                         var dirty = false;
-                        if (_titleTextController!.text !=
-                            widget.initialNote?.title.v) {
+                        if ((_titleTextController!.text !=
+                                widget.initialNote?.title.v) &&
+                            (_titleTextController!.text !=
+                                'Write title here ...')) {
                           dirty = true;
-                        } else if (_contentTextController!.text !=
-                            widget.initialNote?.content.v) {
+                        } else if ((_contentTextController!.text !=
+                                widget.initialNote?.content.v) &&
+                            (_contentTextController!.text !=
+                                'Write content here ...')) {
                           dirty = true;
                         }
+                        print('dity ${dirty}');
                         if (dirty) {
                           print('dity ${dirty}');
-                          showDialog<bool>(
-                              context: context,
-                              barrierDismissible:
-                                  false, // user must tap button!
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Discard change?'),
-                                  content: SingleChildScrollView(
-                                    child: ListBody(
-                                      children: const <Widget>[
-                                        Text('Content has changed.'),
-                                        SizedBox(
-                                          height: 12,
-                                        ),
-                                        Text(
-                                            'Tap \'CONTINUE\' to discard your changes.'),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: const Text('CONTINUE'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context, false);
-                                      },
-                                      child: const Text('CANCEL'),
-                                    ),
-                                  ],
-                                );
-                              });
+                          print(
+                              '_titleTextController ${widget.initialNote?.title.v}');
+                          print(
+                              '_titleTextController ${_titleTextController!.text}');
+                          editPageState.setAccept();
+                        } else {
+                          Navigator.of(context).pop(false);
                         }
                       },
                       icon: SvgPicture.asset('assets/icons/ic_back.svg',
                           color: Colors.white),
                     ),
                   ),
-                  Container(
-                    height: AppDimens.buttonHeight,
-                    width: AppDimens.buttonHeight,
-                    decoration: BoxDecoration(
-                        color: AppColors.greenAccent,
-                        borderRadius:
-                            BorderRadius.circular(AppDimens.buttonHeight / 2)),
-                    child: IconButton(
-                      onPressed: () {
-                        save();
-                      },
-                      icon: Image.asset('assets/icons/ic_save.png',
-                          width: 24, color: Colors.white),
-                    ),
-                  ),
+                  editPageState.needAccept
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              height: AppDimens.buttonHeight,
+                              width: AppDimens.buttonHeight,
+                              decoration: BoxDecoration(
+                                  color: AppColors.greenAccent,
+                                  borderRadius: BorderRadius.circular(
+                                      AppDimens.buttonHeight / 2)),
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                icon: Image.asset(
+                                  'assets/icons/ic_cancel.png',
+                                  height: 24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 24,
+                            ),
+                            Container(
+                              height: AppDimens.buttonHeight,
+                              width: AppDimens.buttonHeight,
+                              decoration: BoxDecoration(
+                                  color: AppColors.redAccent,
+                                  borderRadius: BorderRadius.circular(
+                                      AppDimens.buttonHeight / 2)),
+                              child: IconButton(
+                                onPressed: () {
+                                  save();
+                                },
+                                icon: Image.asset(
+                                  'assets/icons/ic_done.png',
+                                  height: 24,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(
+                          height: AppDimens.buttonHeight,
+                          width: AppDimens.buttonHeight,
+                          decoration: BoxDecoration(
+                              color: AppColors.greenAccent,
+                              borderRadius: BorderRadius.circular(
+                                  AppDimens.buttonHeight / 2)),
+                          child: IconButton(
+                            onPressed: () {
+                              save();
+                            },
+                            icon: Image.asset('assets/icons/ic_save.png',
+                                width: 24, color: Colors.white),
+                          ),
+                        ),
                 ],
               ),
             ),

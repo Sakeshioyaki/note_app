@@ -10,7 +10,7 @@ class EditPageState {
       StreamController<List<int>>.broadcast();
   Stream get listIdDeletingStream => listIdDeletingController.stream;
 
-  void setDeleting() {
+  void setAccept() {
     needAccept = needAccept ? false : true;
     print(needAccept);
     needAcceptController.sink.add(needAccept);
