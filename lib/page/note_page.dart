@@ -163,9 +163,9 @@ class _NotePageState extends State<NotePage> {
                       onPressed: () {
                         edit();
                       },
-                      icon: SvgPicture.asset('assets/icons/ic_edit.svg',
-                          color: Colors.white,
-                          semanticsLabel: 'A red up arrow'),
+                      icon: SvgPicture.asset(
+                        'assets/icons/ic_edit.svg',
+                      ),
                     ),
                   ),
                 ],
