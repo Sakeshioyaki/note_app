@@ -77,134 +77,17 @@ class _NoteListPageState extends State<NoteListPage> {
                                           ),
                                         ),
                                         listPageState.isSearching
-                                            ? Expanded(
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 30),
-                                                  child: buildListSearch(
-                                                      textSearch: listPageState
-                                                          .textSearch,
-                                                      notes: notes),
-                                                ),
-                                              )
-                                            : Expanded(
-                                                child: ListView.builder(
-                                                    itemCount: notes.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      var note = notes[index]!;
-                                                      print(listPageState
-                                                          .listIdDeleting);
-                                                      print(
-                                                          'index : ${note.id.v}');
-                                                      bool acceptDelete = false;
-                                                      for (var element
-                                                          in listPageState
-                                                              .listIdDeleting) {
-                                                        {
-                                                          element == note.id.v
-                                                              ? (acceptDelete =
-                                                                  true)
-                                                              : (acceptDelete =
-                                                                  false);
-                                                          print(element);
-                                                        }
-                                                      }
-                                                      print(
-                                                          'accep ? ${acceptDelete.toString()}');
-
-                                                      return buildListCard(
-                                                          acceptDelete,
-                                                          listPageState
-                                                              .isDeleting,
-                                                          note: note);
-                                                    }),
-                                              ),
+                                            ? buildSearchContent(notes)
+                                            : buildListCardNote(notes),
                                       ],
                                     ),
                                   );
                                 }),
                             floatingActionButton: listPageState.isSearching
                                 ? const SizedBox()
-                                : (listPageState.isDeleting
-                                    ? Container(
-                                        height: AppDimens.buttonHeight,
-                                        width: AppDimens.buttonHeight,
-                                        decoration: BoxDecoration(
-                                            color: AppColors.redAccent,
-                                            borderRadius: BorderRadius.circular(
-                                                AppDimens.buttonHeight / 2)),
-                                        child: IconButton(
-                                          onPressed: () {
-                                            // listPageState.setDeleting();
-                                            listPageState.setDeleting();
-                                          },
-                                          icon: Image.asset(
-                                            'assets/icons/ic_done.png',
-                                            height: 24,
-                                          ),
-                                        ),
-                                      )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Container(
-                                                height: AppDimens.buttonHeight,
-                                                width: AppDimens.buttonHeight,
-                                                decoration: BoxDecoration(
-                                                    color: AppColors.redAccent,
-                                                    borderRadius: BorderRadius
-                                                        .circular(AppDimens
-                                                                .buttonHeight /
-                                                            2)),
-                                                child: IconButton(
-                                                  onPressed: () {
-                                                    listPageState.setDeleting();
-                                                  },
-                                                  icon: SvgPicture.asset(
-                                                      'assets/icons/ic_trash.svg',
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 24,
-                                              ),
-                                              Container(
-                                                height: AppDimens.buttonHeight,
-                                                width: AppDimens.buttonHeight,
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.greenAccent,
-                                                    borderRadius: BorderRadius
-                                                        .circular(AppDimens
-                                                                .buttonHeight /
-                                                            2)),
-                                                child: IconButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                      return const EditNotePage(
-                                                        initialNote: null,
-                                                      );
-                                                    }));
-                                                  },
-                                                  icon: SvgPicture.asset(
-                                                      'assets/icons/ic_add.svg',
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      )),
+                                : listPageState.isDeleting
+                                    ? buildFloatingActionIsDeleteTrue()
+                                    : buildFloatingActionIsDeleteFalse(context),
                           );
                         },
                       );
@@ -212,6 +95,114 @@ class _NoteListPageState extends State<NoteListPage> {
                   );
                 });
           }),
+    );
+  }
+
+  Expanded buildListCardNote(List<DbNote?> notes) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: notes.length,
+          itemBuilder: (context, index) {
+            var note = notes[index]!;
+            print(listPageState.listIdDeleting);
+            print('index : ${note.id.v}');
+            bool acceptDelete = false;
+            for (var element in listPageState.listIdDeleting) {
+              {
+                element == note.id.v
+                    ? (acceptDelete = true)
+                    : (acceptDelete = false);
+                print(element);
+              }
+            }
+            print('accep ? ${acceptDelete.toString()}');
+
+            return buildListCard(acceptDelete, listPageState.isDeleting,
+                note: note);
+          }),
+    );
+  }
+
+  Expanded buildSearchContent(List<DbNote?> notes) {
+    return Expanded(
+      child:
+          buildListSearch(textSearch: listPageState.textSearch, notes: notes),
+    );
+  }
+
+  Row buildFloatingActionIsDeleteFalse(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            buildFloatingIcTrash(),
+            const SizedBox(
+              width: 24,
+            ),
+            buildFloatingIcAdd(context),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Container buildFloatingIcAdd(BuildContext context) {
+    return Container(
+      height: AppDimens.buttonHeight,
+      width: AppDimens.buttonHeight,
+      decoration: BoxDecoration(
+          color: AppColors.greenAccent,
+          borderRadius: BorderRadius.circular(AppDimens.buttonHeight / 2)),
+      child: IconButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return const EditNotePage(
+              initialNote: null,
+            );
+          }));
+        },
+        icon: SvgPicture.asset('assets/icons/ic_add.svg', color: Colors.white),
+      ),
+    );
+  }
+
+  Container buildFloatingIcTrash() {
+    return Container(
+      height: AppDimens.buttonHeight,
+      width: AppDimens.buttonHeight,
+      decoration: BoxDecoration(
+          color: AppColors.redAccent,
+          borderRadius: BorderRadius.circular(AppDimens.buttonHeight / 2)),
+      child: IconButton(
+        onPressed: () {
+          listPageState.setDeleting();
+        },
+        icon:
+            SvgPicture.asset('assets/icons/ic_trash.svg', color: Colors.white),
+      ),
+    );
+  }
+
+  Container buildFloatingActionIsDeleteTrue() {
+    return Container(
+      height: AppDimens.buttonHeight,
+      width: AppDimens.buttonHeight,
+      decoration: BoxDecoration(
+          color: AppColors.redAccent,
+          borderRadius: BorderRadius.circular(AppDimens.buttonHeight / 2)),
+      child: IconButton(
+        onPressed: () {
+          // listPageState.setDeleting();
+          listPageState.setDeleting();
+        },
+        icon: Image.asset(
+          'assets/icons/ic_done.png',
+          height: 24,
+        ),
+      ),
     );
   }
 
@@ -230,8 +221,9 @@ class _NoteListPageState extends State<NoteListPage> {
           var note = resultSearch[index]!;
           print(listPageState.listIdDeleting);
           print('index : ${note.id.v}');
-
-          return buildCard(false, false, note: note, context: context);
+          return Padding(
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 18),
+              child: buildCard(false, false, note: note, context: context));
         });
   }
 
@@ -390,9 +382,9 @@ Widget buildSearch(ListPageState listPageState) {
         if (listPageState.isSearching == false) {
           listPageState.setSearching();
         }
-        if (text == '')
+        if (text == '') {
           listPageState.setSearching();
-        else {
+        } else {
           listPageState.setTextSearch(text);
         }
       },
