@@ -34,7 +34,7 @@ class DbNotes extends ListBase<DbNote> {
   set length(int newLength) => throw 'read-only';
 }
 
-class DbNoteProvider {
+class DbNoteProvider with ChangeNotifier {
   final lock = Lock(reentrant: true);
   final DatabaseFactory dbFactory;
   final _updateTriggerController = StreamController<bool>.broadcast();
