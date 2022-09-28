@@ -6,7 +6,7 @@ import 'package:note_app/common/app_dimens.dart';
 import 'package:note_app/common/app_images.dart';
 import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/main.dart';
-import 'package:note_app/model/model.dart';
+import 'package:note_app/model/note_model.dart';
 import 'package:note_app/page/edit_page/edit_note_provider.dart';
 
 class EditNotePage extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:note_app/common/app_const.dart';
-import 'package:note_app/model/model.dart';
+import 'package:note_app/model/note_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
 
