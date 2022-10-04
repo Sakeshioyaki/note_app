@@ -12,29 +12,31 @@ class Home extends GetWidget<AuthController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: GetX<UserController>(
+        title: GetBuilder<UserController>(
           initState: (_) async {
-            Get.find<UserController>().user =
-                await Database().getUser(Get.find<AuthController>().user!.uid);
+            Get.find<UserController>().user = await Database()
+                .getUser(Get.find<AuthController>().user?.uid ?? '');
+            print(
+                'mal from usercontroller ${Get.find<UserController>().user.email}');
           },
           builder: (_) {
             if (_.user.name != null) {
-              return Text("Welcome  + ${_.user.name}");
+              return Text("Welcome ${_.user.name}");
             } else {
-              return const Text("loading...");
+              return Text("loading...");
             }
           },
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
+            icon: Icon(Icons.exit_to_app),
             onPressed: () {
               controller.signOut();
             },
           ),
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: Icon(Icons.edit),
             onPressed: () {
               if (Get.isDarkMode) {
                 Get.changeTheme(ThemeData.light());

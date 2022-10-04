@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:note_app/controller/user_controller.dart';
 import 'package:note_app/db/db.dart';
 import 'package:note_app/model/user_model.dart';
+import 'package:note_app/page/login_page.dart';
 import 'package:note_app/page/pageHome.dart';
 
 class AuthController extends GetxController {
@@ -15,19 +16,19 @@ class AuthController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-
     firebaseUser = Rx<User?>(auth.currentUser);
-
-    firebaseUser.bindStream(auth.userChanges());
+    firebaseUser.bindStream(auth.authStateChanges());
     ever(firebaseUser, _setInitialScreen);
   }
 
   _setInitialScreen(User? user) {
     if (user == null) {
-      // Get.offAll(() => const Register());
+      Get.offAll(() => const LoginPage());
     } else {
+      print('da co user - ${user.email}');
       Get.offAll(() => Home());
     }
+    print('this cureetn ${this.user?.email}');
   }
 
   void createUser(
@@ -36,8 +37,11 @@ class AuthController extends GetxController {
     String name,
   ) async {
     try {
+      print('come to create user ???... ${name}');
       UserCredential authResult = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      print(
+          'creted user  - ${authResult.user?.uid} - ${authResult.user?.email}');
       UserModel _user = UserModel(
         id: authResult.user!.uid,
         name: name,
@@ -45,6 +49,7 @@ class AuthController extends GetxController {
       );
       if (await Database().createNewUser(_user)) {
         Get.find<UserController>().user = _user;
+
         Get.back();
       }
     } catch (firebaseAuthException) {}

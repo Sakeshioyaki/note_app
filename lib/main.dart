@@ -28,12 +28,9 @@ class MyApp extends StatelessWidget {
       home: GetBuilder<UserController>(
         init: UserController(),
         builder: (_) {
-          print('nulll??? 1');
           if (Get.find<AuthController>().user?.uid != null) {
-            print('nulll??? 2');
             return Home();
           } else {
-            print('nulll??? 3');
             return LoginPage();
           }
         },

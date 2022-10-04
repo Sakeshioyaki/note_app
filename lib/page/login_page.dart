@@ -52,9 +52,7 @@ class LoginPage extends StatelessWidget {
                 hintStyle: AppTextStyle.textLightPlaceholderS14,
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

@@ -11,6 +11,7 @@ class Database {
         "name": user.name,
         "email": user.email,
       });
+      print('dang tao userController - va add user vo database - ${user.id}');
       return true;
     } catch (e) {
       print(e);

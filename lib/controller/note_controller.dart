@@ -4,7 +4,7 @@ import 'package:note_app/db/db.dart';
 import 'package:note_app/model/note_model.dart';
 
 class NoteController extends GetxController {
-  late Rx<List<NoteModel>> noteList;
+  late Rx<List<NoteModel>> noteList = Rx<List<NoteModel>>([]);
 
   List<NoteModel> get notes => noteList.value;
 
