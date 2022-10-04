@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialBinding: AuthBinding(),
+      // unknownRoute: GetPage(name: '/notfound', page: () => UnknownRoutePage()),
       home: GetBuilder<UserController>(
         init: UserController(),
         builder: (_) {
@@ -35,6 +36,10 @@ class MyApp extends StatelessWidget {
           }
         },
       ),
+      getPages: [
+        GetPage(name: '/', page: () => Home()),
+        GetPage(name: '/login', page: () => LoginPage()),
+      ],
     );
   }
 }

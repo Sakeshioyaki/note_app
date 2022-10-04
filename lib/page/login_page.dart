@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_text_styles.dart';
+import 'package:note_app/controller/auth_controller.dart';
 import 'package:note_app/page/sign_up.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +84,10 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  controller.login(
+                      emailController.text, passwordController.text);
+                },
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(

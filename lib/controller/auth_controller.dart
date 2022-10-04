@@ -23,7 +23,7 @@ class AuthController extends GetxController {
 
   _setInitialScreen(User? user) {
     if (user == null) {
-      Get.offAll(() => const LoginPage());
+      Get.offAll(() => LoginPage());
     } else {
       print('da co user - ${user.email}');
       Get.offAll(() => Home());
@@ -56,12 +56,15 @@ class AuthController extends GetxController {
   }
 
   void login(String email, password) async {
+    print('longingggg..');
     try {
       UserCredential authResult = await auth.signInWithEmailAndPassword(
           email: email, password: password);
       Get.find<UserController>().user =
           await Database().getUser(authResult.user!.uid);
-    } catch (firebaseAuthException) {}
+    } catch (firebaseAuthException) {
+      print('longingggg.. error');
+    }
   }
 
   void signOut() async {

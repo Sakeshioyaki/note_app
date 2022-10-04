@@ -4,6 +4,7 @@ import 'package:note_app/controller/auth_controller.dart';
 import 'package:note_app/controller/note_controller.dart';
 import 'package:note_app/controller/user_controller.dart';
 import 'package:note_app/db/db.dart';
+import 'package:note_app/page/login_page.dart';
 import 'package:note_app/page/widgets/todo_card.dart';
 
 class Home extends GetWidget<AuthController> {
@@ -23,20 +24,21 @@ class Home extends GetWidget<AuthController> {
             if (_.user.name != null) {
               return Text("Welcome ${_.user.name}");
             } else {
-              return Text("loading...");
+              return const Text("loading...");
             }
           },
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               controller.signOut();
+              Get.to(LoginPage());
             },
           ),
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () {
               if (Get.isDarkMode) {
                 Get.changeTheme(ThemeData.light());
