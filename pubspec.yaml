@@ -30,8 +30,6 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  sqflite: ^2.1.0
-  cv: ^0.2.8+1
   synchronized: ^3.0.0+3
   flutter_svg: ^1.1.5
   intl: ^0.17.0
@@ -39,7 +37,6 @@ dependencies:
   firebase_core: ^1.24.0
   firebase_auth: ^3.11.1
   cloud_firestore: ^3.5.0
-  provider: ^6.0.3
   firebase_ui_auth: ^1.0.0-dev.0
 
 dev_dependencies:

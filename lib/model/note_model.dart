@@ -6,15 +6,17 @@ class NoteModel {
   Timestamp? dateCreated;
 
   NoteModel(
-      this.content,
-      this.id,
-      this.dateCreated,
-      );
+    this.content,
+    this.id,
+    this.dateCreated,
+  );
 
   NoteModel.fromDocumentSnapshot(
-      DocumentSnapshot documentSnapshot,
-      ) {
+    DocumentSnapshot documentSnapshot,
+  ) {
     id = documentSnapshot.id;
-    content = documentSnapshot.data([content]);
-    dateCreated = documentSnapshot.data["dateCreated"];
+    final data = documentSnapshot.data() as Map<String, dynamic>;
+    content = data["content"];
+    dateCreated = data["dateCreated"];
   }
+}

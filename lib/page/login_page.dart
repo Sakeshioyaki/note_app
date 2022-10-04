@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_text_styles.dart';
+import 'package:note_app/page/sign_up.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -50,6 +51,33 @@ class LoginPage extends StatelessWidget {
                 hintText: 'Enter Password ...',
                 hintStyle: AppTextStyle.textLightPlaceholderS14,
               ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Not have account yet ? go to ',
+                  style: AppTextStyle.textLightPlaceholderS14,
+                ),
+                TextButton(
+                  child: Text(
+                    'Sign Up',
+                    style: AppTextStyle.textLightPlaceholderS14Bold,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SignUp();
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             OutlinedButton(
