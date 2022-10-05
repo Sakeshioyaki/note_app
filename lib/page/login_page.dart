@@ -9,7 +9,7 @@ class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final AuthController controller = Get.find();
+  final AuthController authController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +42,7 @@ class LoginPage extends StatelessWidget {
                 hintText: 'Enter email ...',
                 hintStyle: AppTextStyle.textLightPlaceholderS14,
               ),
+              controller: emailController,
             ),
             const SizedBox(
               height: 20,
@@ -56,6 +57,7 @@ class LoginPage extends StatelessWidget {
                 hintText: 'Enter Password ...',
                 hintStyle: AppTextStyle.textLightPlaceholderS14,
               ),
+              controller: passwordController,
             ),
             const SizedBox(height: 10),
             Row(
@@ -71,13 +73,7 @@ class LoginPage extends StatelessWidget {
                     style: AppTextStyle.textLightPlaceholderS14Bold,
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return SignUp();
-                        },
-                      ),
-                    );
+                    Get.to(() => SignUp());
                   },
                 ),
               ],
@@ -85,7 +81,7 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 20),
             OutlinedButton(
                 onPressed: () {
-                  controller.login(
+                  authController.login(
                       emailController.text, passwordController.text);
                 },
                 style: ButtonStyle(

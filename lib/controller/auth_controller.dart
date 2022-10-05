@@ -18,7 +18,7 @@ class AuthController extends GetxController {
     super.onReady();
     firebaseUser = Rx<User?>(auth.currentUser);
     firebaseUser.bindStream(auth.authStateChanges());
-    ever(firebaseUser, _setInitialScreen);
+    _setInitialScreen(firebaseUser.value);
   }
 
   _setInitialScreen(User? user) {
@@ -56,7 +56,7 @@ class AuthController extends GetxController {
   }
 
   void login(String email, password) async {
-    print('longingggg..');
+    print('longingggg.. ${email}  - ${password}');
     try {
       UserCredential authResult = await auth.signInWithEmailAndPassword(
           email: email, password: password);

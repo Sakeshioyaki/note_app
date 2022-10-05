@@ -15,6 +15,4 @@ class NoteController extends GetxController {
     noteList
         .bindStream(Database().noteStream(uid)); //stream coming from firebase
   }
-
-  void addNewNote(NoteModel note) {}
 }

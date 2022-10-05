@@ -31,11 +31,12 @@ class Database {
     }
   }
 
-  Future<void> addnote(String content, String uid) async {
+  Future<void> addNote(String content, String uid, String title) async {
     try {
       await _firestore.collection("users").doc(uid).collection("notes").add({
         'dateCreated': Timestamp.now(),
         'content': content,
+        'title': title,
         'done': false,
       });
     } catch (e) {

@@ -9,16 +9,17 @@ import 'package:note_app/page/widgets/todo_card.dart';
 
 class Home extends GetWidget<AuthController> {
   final TextEditingController _noteController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: GetBuilder<UserController>(
+        title: GetX<UserController>(
           initState: (_) async {
             Get.find<UserController>().user = await Database()
                 .getUser(Get.find<AuthController>().user?.uid ?? '');
             print(
-                'mal from usercontroller ${Get.find<UserController>().user.email}');
+                'mal from usercontroller ${Get.find<UserController>().user.name}');
           },
           builder: (_) {
             if (_.user.name != null) {
@@ -34,19 +35,9 @@ class Home extends GetWidget<AuthController> {
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               controller.signOut();
-              Get.to(LoginPage());
+              Get.to(() => LoginPage());
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              if (Get.isDarkMode) {
-                Get.changeTheme(ThemeData.light());
-              } else {
-                Get.changeTheme(ThemeData.dark());
-              }
-            },
-          )
         ],
       ),
       body: Column(
