@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:note_app/controller/auth_controller.dart';
 import 'package:note_app/db/db.dart';
@@ -12,7 +13,13 @@ class NoteController extends GetxController {
   void onInit() {
     super.onInit();
     String uid = Get.find<AuthController>().user!.uid;
-    noteList
-        .bindStream(Database().noteStream(uid)); //stream coming from firebase
+    // noteList
+    //     .bindStream(Database().noteStream(uid)); //stream coming from firebase
+  }
+
+  void createNote(String content, String uid, String title) async {
+    try {
+      await Database().addNote(content, uid, title, Timestamp.now());
+    } catch (firebaseAuthException) {}
   }
 }

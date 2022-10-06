@@ -31,13 +31,13 @@ class Database {
     }
   }
 
-  Future<void> addNote(String content, String uid, String title) async {
+  Future<void> addNote(
+      String content, String uid, String title, Timestamp dateCreated) async {
     try {
       await _firestore.collection("users").doc(uid).collection("notes").add({
-        'dateCreated': Timestamp.now(),
+        'dateCreated': dateCreated,
         'content': content,
         'title': title,
-        'done': false,
       });
     } catch (e) {
       print(e);
@@ -45,19 +45,22 @@ class Database {
     }
   }
 
-  Stream<List<NoteModel>> noteStream(String uid) {
-    return _firestore
-        .collection("users")
-        .doc(uid)
-        .collection("notes")
-        .orderBy("dateCreated", descending: true)
-        .snapshots()
-        .map((QuerySnapshot query) {
-      List<NoteModel> retVal = [];
-      query.docs.forEach((element) {
-        retVal.add(NoteModel.fromDocumentSnapshot(element));
-      });
+  Future<List<NoteModel>> getListNote(String uid) async {
+    List<NoteModel> retVal = [];
+    try {
+      await _firestore
+          .collection("users")
+          .doc(uid)
+          .collection("notes")
+          .orderBy("dateCreated", descending: true)
+          .get()
+          .then((value) => value.docs
+              .map((e) => retVal.add(NoteModel.fromDocumentSnapshot(e))));
+
       return retVal;
-    });
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 }

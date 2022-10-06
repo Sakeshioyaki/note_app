@@ -24,12 +24,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       // unknownRoute: GetPage(name: '/notfound', page: () => UnknownRoutePage()),
-      home: GetX<UserController>(
+      home: GetX<AuthController>(
         initState: (_) async {
           Get.put<UserController>(UserController());
         },
         builder: (_) {
-          if (Get.find<AuthController>().user?.uid != null) {
+          if (_.user?.uid != null) {
             return Home();
           } else {
             return LoginPage();

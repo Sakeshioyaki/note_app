@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/controller/auth_controller.dart';
 
-class SignUp extends GetWidget<AuthController> {
+class SignUp {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final controller = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
