@@ -2,10 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:note_app/controller/auth_controller.dart';
-import 'package:note_app/controller/user_controller.dart';
 import 'package:note_app/firebase_options.dart';
+import 'package:note_app/page/home/pageHome.dart';
 import 'package:note_app/page/login_page.dart';
-import 'package:note_app/page/pageHome.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,19 +24,20 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       // unknownRoute: GetPage(name: '/notfound', page: () => UnknownRoutePage()),
       home: GetX<AuthController>(
-        initState: (_) async {
-          Get.put<UserController>(UserController());
-        },
+        init: Get.put<AuthController>(AuthController(), permanent: true),
         builder: (_) {
           if (_.user?.uid != null) {
-            return Home();
+            print('hull here -- ${_.user?.uid}');
+            // Get.find<UserController>().user =
+            //     await Database().getUser(authResult.user!.uid);
+            return HomePage();
           } else {
             return LoginPage();
           }
         },
       ),
       getPages: [
-        GetPage(name: '/', page: () => Home()),
+        GetPage(name: '/', page: () => HomePage()),
         GetPage(name: '/login', page: () => LoginPage()),
       ],
     );

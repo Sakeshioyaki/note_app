@@ -45,18 +45,41 @@ class Database {
     }
   }
 
-  Future<List<NoteModel>> getListNote(String uid) async {
-    List<NoteModel> retVal = [];
+  Future<void> deleteNote(
+    String noteId,
+    String uid,
+  ) async {
     try {
       await _firestore
           .collection("users")
           .doc(uid)
           .collection("notes")
-          .orderBy("dateCreated", descending: true)
-          .get()
-          .then((value) => value.docs
-              .map((e) => retVal.add(NoteModel.fromDocumentSnapshot(e))));
+          .doc(noteId)
+          .delete()
+          .then(
+            (doc) => print("Document deleted -- ${noteId}"),
+            onError: (e) => print("Error updating document $e"),
+          );
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 
+  getListNote(String uid) async {
+    print('dang getlistnote tu $uid');
+    List<NoteModel> retVal = [];
+    try {
+      final re = await _firestore
+          .collection("users")
+          .doc(uid)
+          .collection("notes")
+          .get();
+      for (var e in re.docs) {
+        retVal.add(NoteModel.fromDocumentSnapshot(e));
+        print('this is value -- ${NoteModel.fromDocumentSnapshot(e).title}');
+      }
+      print('this is reval - $retVal -- ${re.docs.length}');
       return retVal;
     } catch (e) {
       print(e);

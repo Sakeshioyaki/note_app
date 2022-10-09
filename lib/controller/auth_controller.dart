@@ -3,22 +3,21 @@ import 'package:get/get.dart';
 import 'package:note_app/controller/user_controller.dart';
 import 'package:note_app/db/db.dart';
 import 'package:note_app/model/user_model.dart';
+import 'package:note_app/page/home/pageHome.dart';
 import 'package:note_app/page/login_page.dart';
-import 'package:note_app/page/pageHome.dart';
 
 class AuthController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   static AuthController instance = Get.find();
-  late Rx<User?> firebaseUser;
-  User? get user => firebaseUser.value;
+  late Rx<User>? firebaseUser;
+  User? get user => firebaseUser?.value;
 
   @override
   void onReady() {
     super.onReady();
-    firebaseUser = Rx<User?>(auth.currentUser);
-    firebaseUser.bindStream(auth.authStateChanges());
-    _setInitialScreen(firebaseUser.value);
+    firebaseUser = Rx<User>(auth.currentUser!);
+    _setInitialScreen(firebaseUser?.value);
   }
 
   _setInitialScreen(User? user) {
@@ -26,7 +25,7 @@ class AuthController extends GetxController {
       Get.offAll(() => LoginPage());
     } else {
       print('da co user - ${user.email}');
-      Get.offAll(() => Home());
+      Get.offAll(() => HomePage());
     }
     print('this cureetn ${this.user?.email}');
   }
@@ -56,7 +55,7 @@ class AuthController extends GetxController {
   }
 
   void login(String email, password) async {
-    print('longingggg.. ${email}  - ${password}');
+    print('longingggg.. $email  - $password');
     try {
       UserCredential authResult = await auth.signInWithEmailAndPassword(
           email: email, password: password);

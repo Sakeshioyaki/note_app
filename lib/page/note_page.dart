@@ -5,7 +5,7 @@
 // import 'package:note_app/db/db.dart';
 //
 // class NotePage extends StatefulWidget {
-//   final int? noteId;
+//   final String noteId;
 //
 //   const NotePage({Key? key, required this.noteId}) : super(key: key);
 //
