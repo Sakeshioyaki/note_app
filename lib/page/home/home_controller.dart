@@ -1,29 +1,41 @@
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  RxBool isDeleting = false.obs;
-  RxBool isSearching = false.obs;
-  RxList<RxString> listIdDeleting = <RxString>[].obs;
-  RxString textSearch = ''.obs;
+  bool isDeleting = false;
+  bool isSearching = false;
+  List<String> listIdDeleting = <String>[];
+  String textSearch = '';
 
   void setTextSearch(text) {
-    textSearch.value = text;
+    print('come setTextSearch');
+
+    textSearch = text;
+    update();
   }
 
   void setDeleting() {
-    isDeleting.value = isDeleting.value ? false : true;
+    print('come setDeleting  -- ${isDeleting}');
+    isDeleting = isDeleting ? false : true;
+    print('come setDeleting  -- ${isDeleting}');
+
+    update();
   }
 
   void setSearching() {
-    isSearching.value = isSearching.value ? false : true;
+    print('come setSearching');
+    isSearching = isSearching ? false : true;
+    update();
   }
 
   void addListDeleting(String? id) {
-    listIdDeleting.add(RxString(id!));
+    print('come addListDeleting');
+    listIdDeleting.add(id!);
+    update();
   }
 
   void removeListDeleting(String? id) {
-    listIdDeleting.removeWhere((item) => item.value == id);
+    listIdDeleting.removeWhere((item) => item == id);
     print('lít editing $listIdDeleting');
+    update();
   }
 }

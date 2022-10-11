@@ -10,9 +10,12 @@ import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/controller/auth_controller.dart';
 import 'package:note_app/controller/note_controller.dart';
 import 'package:note_app/controller/user_controller.dart';
+import 'package:note_app/db/db.dart';
 import 'package:note_app/model/note_model.dart';
+import 'package:note_app/page/edit_note/edit_note_page.dart';
 import 'package:note_app/page/home/home_controller.dart';
 import 'package:note_app/page/login_page.dart';
+import 'package:note_app/page/note/note_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,105 +25,113 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  UserController userController = Get.put<UserController>(UserController());
+  UserController userController = Get.find<UserController>();
   HomeController homeController = Get.put<HomeController>(HomeController());
   NoteController noteController = Get.put<NoteController>(NoteController());
   AuthController authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: GetX<UserController>(
-          builder: (_) {
-            if (_.user.name != null) {
-              return Text("Welcome ${_.user.name}");
-            } else {
-              return const Text("loading...");
-            }
-          },
+    return GetBuilder<UserController>(initState: (_) async {
+      Get.find<UserController>().user =
+          await Database().getUser(Get.find<AuthController>().user!.uid);
+    }, builder: (_) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Welcome ${_.user.name}"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: () {
+                authController.signOut();
+                Get.to(() => LoginPage());
+              },
+            ),
+          ],
         ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () {
-              authController.signOut();
-              Get.to(() => LoginPage());
-            },
-          ),
-        ],
-      ),
-      body: buildBody(),
-    );
+        body: GetBuilder<HomeController>(builder: (_) {
+          return Scaffold(
+            body: buildMyNote(),
+            floatingActionButton: _.isSearching
+                ? const SizedBox()
+                : _.isDeleting
+                    ? buildFloatingActionIsDeleteTrue()
+                    : buildFloatingActionIsDeleteFalse(context),
+          );
+        }),
+      );
+    });
   }
 
   Widget buildBody() {
-    return Scaffold(
-      body: buildMyNote(),
-      floatingActionButton: homeController.isSearching.value
-          ? const SizedBox()
-          : homeController.isDeleting.value
-              ? buildFloatingActionIsDeleteTrue()
-              : buildFloatingActionIsDeleteFalse(context),
+    return GetBuilder<HomeController>(
+      builder: (_) {
+        return Scaffold(
+          body: buildMyNote(),
+          floatingActionButton: homeController.isSearching
+              ? const SizedBox()
+              : homeController.isDeleting
+                  ? buildFloatingActionIsDeleteTrue()
+                  : buildFloatingActionIsDeleteFalse(context),
+        );
+      },
     );
   }
 
   Widget buildMyNote() {
-    if (noteController.noteList.value == []) {
+    if (noteController.noteList == []) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
-    return SafeArea(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'My Notes',
-                  style: AppTextStyle.textDarkPrimaryS36Bold,
-                ),
-                buildSearch(),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 24,
-                    bottom: 10,
+    return GetBuilder<HomeController>(builder: (_) {
+      return SafeArea(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'My Notes',
+                    style: AppTextStyle.textDarkPrimaryS36Bold,
                   ),
-                  child: Text(
-                    'Note List',
-                    style: AppTextStyle.textDarkPrimaryS24Bold,
+                  buildSearch(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 24,
+                      bottom: 10,
+                    ),
+                    child: Text(
+                      'Note List',
+                      style: AppTextStyle.textDarkPrimaryS24Bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          homeController.isSearching.value
-              ? buildSearchContent()
-              : buildListCardNote(),
-        ],
-      ),
-    );
+            _.isSearching ? buildSearchContent() : buildListCardNote(),
+          ],
+        ),
+      );
+    });
   }
 
   Widget buildListCardNote() {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: noteController.noteList.value.length,
-        itemBuilder: (context, index) {
-          return buildListCard(index);
-        },
-      ),
-    );
-  }
-
-  Widget buildSearchContent() {
-    return Expanded(
-      child: buildListSearch(),
+    return GetBuilder<NoteController>(
+      builder: (_) {
+        return Expanded(
+          child: ListView.builder(
+            itemCount: _.noteList.length,
+            itemBuilder: (context, index) {
+              return buildListCard(index);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -153,13 +164,13 @@ class HomePageState extends State<HomePage> {
       ),
       child: IconButton(
         onPressed: () {
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) {
-          //       return const EditNotePage(initialNote: null);
-          //     },
-          //   ),
-          // );
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return const EditNotePage(initialNote: null);
+              },
+            ),
+          );
         },
         icon: SvgPicture.asset(AppImages.icAdd, color: Colors.white),
       ),
@@ -203,24 +214,34 @@ class HomePageState extends State<HomePage> {
     );
   }
 
+  Widget buildSearchContent() {
+    return Expanded(
+      child: buildListSearch(),
+    );
+  }
+
   Widget buildListSearch() {
-    final notes = noteController.noteList.value;
+    final notes = noteController.noteList;
     List<NoteModel?> resultSearch = [];
     for (var e in notes) {
-      if (e.title!.contains(homeController.textSearch.value) ||
-          e.content!.contains(homeController.textSearch.value)) {
+      if (e.title!.contains(homeController.textSearch) ||
+          e.content!.contains(homeController.textSearch)) {
         resultSearch.add(e);
       }
     }
-    return ListView.builder(
-      itemCount: resultSearch.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(left: 30, right: 30, top: 18),
-          child: buildCard(index),
-        );
-      },
-    );
+    return resultSearch.isEmpty
+        ? const Center(
+            child: Text('NULL'),
+          )
+        : ListView.builder(
+            itemCount: resultSearch.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30, top: 18),
+                child: buildCard(index),
+              );
+            },
+          );
   }
 
   Widget buildListCard(index) {
@@ -233,14 +254,14 @@ class HomePageState extends State<HomePage> {
   Widget buildCard(int index) {
     bool acceptDelete = false;
     for (var element in homeController.listIdDeleting) {
-      if (element.value == noteController.noteList.value[index].id) {
+      if (element == noteController.noteList[index].id) {
         (acceptDelete = true);
       }
     }
     return Column(
       children: [
         buildContent(index),
-        (homeController.isDeleting.value)
+        (homeController.isDeleting)
             ? (acceptDelete == true
                 ? SizedBox(
                     width: double.infinity,
@@ -251,7 +272,7 @@ class HomePageState extends State<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               homeController.removeListDeleting(
-                                  noteController.noteList.value[index].id);
+                                  noteController.noteList[index].id);
                             },
                             child: Container(
                               decoration: const BoxDecoration(
@@ -271,7 +292,7 @@ class HomePageState extends State<HomePage> {
                           child: GestureDetector(
                             onTap: () async {
                               await noteController.deleteNote(
-                                  noteController.noteList.value[index].id!,
+                                  noteController.noteList[index].id!,
                                   userController.user.id);
                             },
                             child: Container(
@@ -293,8 +314,8 @@ class HomePageState extends State<HomePage> {
                   )
                 : GestureDetector(
                     onTap: () async {
-                      homeController.addListDeleting(
-                          noteController.noteList.value[index].id);
+                      homeController
+                          .addListDeleting(noteController.noteList[index].id);
                     },
                     child: Container(
                       height: 46,
@@ -319,7 +340,7 @@ class HomePageState extends State<HomePage> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.lightBackground,
-        borderRadius: homeController.isDeleting.value
+        borderRadius: homeController.isDeleting
             ? const BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
@@ -328,11 +349,11 @@ class HomePageState extends State<HomePage> {
       ),
       child: InkWell(
         onTap: () {
-          // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          //   return NotePage(
-          //     noteId: noteController.noteList.value[index].id!,
-          //   );
-          // }));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return NotePage(
+              note: noteController.noteList[index],
+            );
+          }));
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 23),
@@ -342,15 +363,14 @@ class HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                noteController.noteList.value[index].title ?? '',
+                noteController.noteList[index].title ?? '',
                 style: AppTextStyle.textDarkPrimaryS18,
               ),
               const SizedBox(
                 height: 7,
               ),
               Text(
-                LineSplitter.split(
-                        noteController.noteList.value[index].content!)
+                LineSplitter.split(noteController.noteList[index].content!)
                     .first,
                 style: AppTextStyle.textDarkPrimaryS14,
                 maxLines: 4,
@@ -402,7 +422,7 @@ class HomePageState extends State<HomePage> {
         style: AppTextStyle.textLightPlaceholderS14,
         // onTap: (text) {},
         onChanged: (text) {
-          if (homeController.isSearching.value) {
+          if (!homeController.isSearching) {
             homeController.setSearching();
           }
           if (text == '') {

@@ -45,6 +45,21 @@ class Database {
     }
   }
 
+  Future<void> updateNote(
+      String id, String uid, String title, String content) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(uid)
+          .collection("notes")
+          .doc(id)
+          .update({title: title, content: content});
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
   Future<void> deleteNote(
     String noteId,
     String uid,

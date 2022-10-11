@@ -10,14 +10,14 @@ class AuthController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   static AuthController instance = Get.find();
-  late Rx<User>? firebaseUser;
-  User? get user => firebaseUser?.value;
+  late User? firebaseUser;
+  User? get user => firebaseUser;
 
   @override
   void onReady() {
     super.onReady();
-    firebaseUser = Rx<User>(auth.currentUser!);
-    _setInitialScreen(firebaseUser?.value);
+    firebaseUser = auth.currentUser!;
+    _setInitialScreen(firebaseUser);
   }
 
   _setInitialScreen(User? user) {
@@ -52,6 +52,7 @@ class AuthController extends GetxController {
         Get.back();
       }
     } catch (firebaseAuthException) {}
+    update();
   }
 
   void login(String email, password) async {
@@ -64,10 +65,12 @@ class AuthController extends GetxController {
     } catch (firebaseAuthException) {
       print('longingggg.. error');
     }
+    update();
   }
 
   void signOut() async {
     await auth.signOut();
     Get.find<UserController>().clear();
+    update();
   }
 }
