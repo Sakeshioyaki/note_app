@@ -1,9 +1,16 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:note_app/model/note_model.dart';
 import 'package:note_app/model/user_model.dart';
+import 'package:path/path.dart';
 
 class Database {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final storageRef = FirebaseStorage.instance.ref();
+  // final imagesRef = storageRef.child("images");
 
   Future<bool> createNewUser(UserModel user) async {
     try {
@@ -31,13 +38,14 @@ class Database {
     }
   }
 
-  Future<void> addNote(
-      String content, String uid, String title, Timestamp dateCreated) async {
+  Future<void> addNote(String content, String uid, String title,
+      Timestamp dateCreated, String imgUrl) async {
     try {
       await _firestore.collection("users").doc(uid).collection("notes").add({
         'dateCreated': dateCreated,
         'content': content,
         'title': title,
+        'imgUrl': imgUrl,
       });
     } catch (e) {
       print(e);
@@ -45,15 +53,34 @@ class Database {
     }
   }
 
-  Future<void> updateNote(
-      String id, String uid, String title, String content) async {
+  Future<void> updateNote(String id, String uid, String title, String content,
+      String imgUrl) async {
     try {
       await _firestore
           .collection("users")
           .doc(uid)
           .collection("notes")
           .doc(id)
-          .update({'title': title, 'content': content});
+          .update({'title': title, 'content': content, 'imgUrl': imgUrl});
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<String> uploadImg(String filePath) async {
+    String instanceName = "/images/${basename(filePath)}";
+    final imagesRef = storageRef.child(instanceName);
+    File file = File(filePath);
+
+    print('dang upload file - $filePath');
+
+    try {
+      final uploadTask = await imagesRef.putFile(file);
+      var url = await imagesRef.getDownloadURL();
+      print('dang upload file - $url');
+      print('--- ${uploadTask.state}');
+      return url;
     } catch (e) {
       print(e);
       rethrow;

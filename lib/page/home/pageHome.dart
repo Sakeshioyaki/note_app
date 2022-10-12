@@ -14,7 +14,6 @@ import 'package:note_app/db/db.dart';
 import 'package:note_app/model/note_model.dart';
 import 'package:note_app/page/edit_note/edit_note_page.dart';
 import 'package:note_app/page/home/home_controller.dart';
-import 'package:note_app/page/login_page.dart';
 import 'package:note_app/page/note/note_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,19 +36,19 @@ class HomePageState extends State<HomePage> {
           await Database().getUser(Get.find<AuthController>().user!.uid);
     }, builder: (_) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text("Welcome ${_.user.name}"),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.exit_to_app),
-              onPressed: () {
-                authController.signOut();
-                Get.to(() => LoginPage());
-              },
-            ),
-          ],
-        ),
+        // appBar: AppBar(
+        //   title: Text("Welcome ${_.user.name}"),
+        //   centerTitle: true,
+        //   actions: [
+        //     IconButton(
+        //       icon: const Icon(Icons.exit_to_app),
+        //       onPressed: () {
+        //         authController.signOut();
+        //         Get.to(() => LoginPage());
+        //       },
+        //     ),
+        //   ],
+        // ),
         body: GetBuilder<HomeController>(builder: (_) {
           return Scaffold(
             body: buildMyNote(),
@@ -95,10 +94,12 @@ class HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'My Notes',
-                    style: AppTextStyle.textDarkPrimaryS36Bold,
-                  ),
+                  GetBuilder<UserController>(builder: (_) {
+                    return Text(
+                      "Welcome! ${_.user.name}",
+                      style: AppTextStyle.textDarkPrimaryS36Bold,
+                    );
+                  }),
                   buildSearch(),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -358,23 +359,38 @@ class HomePageState extends State<HomePage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 23),
           alignment: Alignment.topLeft,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                noteController.noteList[index].title ?? '',
-                style: AppTextStyle.textDarkPrimaryS18,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    noteController.noteList[index].title ?? '',
+                    style: AppTextStyle.textDarkPrimaryS18,
+                  ),
+                  const SizedBox(
+                    height: 7,
+                  ),
+                  Text(
+                    LineSplitter.split(noteController.noteList[index].content!)
+                        .first,
+                    style: AppTextStyle.textDarkPrimaryS14,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
               ),
-              const SizedBox(
-                height: 7,
-              ),
-              Text(
-                LineSplitter.split(noteController.noteList[index].content!)
-                    .first,
-                style: AppTextStyle.textDarkPrimaryS14,
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: noteController.noteList[index]?.imgUrl != ''
+                    ? Image.network(
+                        noteController.noteList[index]!.imgUrl!,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      )
+                    : const SizedBox(),
               )
             ],
           ),

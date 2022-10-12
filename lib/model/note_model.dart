@@ -4,6 +4,7 @@ class NoteModel {
   String? content;
   String? title;
   String? id;
+  String? imgUrl;
   Timestamp? dateCreated;
 
   NoteModel(
@@ -11,6 +12,7 @@ class NoteModel {
     this.id,
     this.title,
     this.dateCreated,
+    this.imgUrl,
   );
 
   NoteModel.fromDocumentSnapshot(
@@ -21,5 +23,6 @@ class NoteModel {
     content = data["content"];
     title = data["title"];
     dateCreated = data["dateCreated"];
+    imgUrl = data["imgUrl"];
   }
 }

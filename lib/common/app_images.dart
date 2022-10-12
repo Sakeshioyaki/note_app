@@ -10,4 +10,5 @@ class AppImages {
   static const String icSave = 'assets/icons/ic_save.png';
   static const String icSearch = 'assets/icons/ic_search.svg';
   static const String icTrash = 'assets/icons/ic_trash.svg';
+  static const String icUpload = 'assets/icons/ic_upload.png';
 }

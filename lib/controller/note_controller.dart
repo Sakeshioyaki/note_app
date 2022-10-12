@@ -15,9 +15,14 @@ class NoteController extends GetxController {
   }
 
   void createNote(NoteModel note, String uid) async {
+    String link = '';
     try {
+      if (note.imgUrl != '') {
+        link = await uploadImage(note.imgUrl!);
+        print('this link ${link}');
+      }
       await Database().addNote(
-          note.content ?? '', uid, note.title ?? '', note.dateCreated!);
+          note.content ?? '', uid, note.title ?? '', note.dateCreated!, link);
     } catch (firebaseAuthException) {}
     await getListNote(uid);
     update();
@@ -31,14 +36,30 @@ class NoteController extends GetxController {
     update();
   }
 
-  updateNote(String id, String uid, String content, String tittle) async {
+  updateNote(String id, String uid, String content, String tittle,
+      String imgUrl) async {
+    String link = '';
     try {
-      await Database().updateNote(id, uid, tittle, content);
+      if (imgUrl != '') {
+        link = await uploadImage(imgUrl);
+        print('this link ${link}');
+      }
+      await Database().updateNote(id, uid, tittle, content, link);
     } catch (firebaseAuthException) {
       print('bugg');
     }
     await getListNote(uid);
     update();
+  }
+
+  uploadImage(String path) async {
+    try {
+      String url = await Database().uploadImg(path);
+      return url;
+    } catch (firebaseAuthException) {
+      print('bugg');
+    }
+    // update();
   }
 
   Future<void> getListNote(String uid) async {

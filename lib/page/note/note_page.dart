@@ -57,6 +57,19 @@ class NotePageState extends State<NotePage> {
                   style: AppTextStyle.textLightPlaceholderS12,
                 ),
               ),
+              const SizedBox(
+                height: 30,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: widget.note?.imgUrl != ''
+                    ? Image.network(
+                        widget.note!.imgUrl!,
+                        height: 300,
+                        fit: BoxFit.cover,
+                      )
+                    : const SizedBox(),
+              ),
               ListTile(
                   title: Text(
                 widget.note?.content ?? '',
@@ -69,7 +82,7 @@ class NotePageState extends State<NotePage> {
             children: [
               Row(
                 children: [
-                  SizedBox(width: 40),
+                  const SizedBox(width: 40),
                   Container(
                     height: AppDimens.buttonHeight,
                     width: AppDimens.buttonHeight,
@@ -107,7 +120,7 @@ class NotePageState extends State<NotePage> {
                                     false, // user must tap button!
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Delete note?'),
+                                    title: const Text('Delete note?'),
                                     content: SingleChildScrollView(
                                       child: ListBody(
                                         children: const <Widget>[
@@ -124,17 +137,17 @@ class NotePageState extends State<NotePage> {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                              return HomePage();
+                                              return const HomePage();
                                             }),
                                           );
                                         },
-                                        child: Text('YES'),
+                                        child: const Text('YES'),
                                       ),
                                       TextButton(
                                         onPressed: () {
                                           Navigator.of(context).pop(false);
                                         },
-                                        child: Text('NO'),
+                                        child: const Text('NO'),
                                       ),
                                     ],
                                   );
@@ -152,7 +165,7 @@ class NotePageState extends State<NotePage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 24),
+                  const SizedBox(width: 24),
                   Container(
                     height: AppDimens.buttonHeight,
                     width: AppDimens.buttonHeight,

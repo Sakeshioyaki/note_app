@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_dimens.dart';
@@ -40,6 +43,7 @@ class EditNotePageState extends State<EditNotePage> {
         TextEditingController(text: widget.initialNote?.title);
     _contentTextController =
         TextEditingController(text: widget.initialNote?.content);
+    editNoteController.fileUrl = widget.initialNote?.imgUrl ?? '';
   }
 
   Future save() async {
@@ -50,21 +54,23 @@ class EditNotePageState extends State<EditNotePage> {
         await noteController.updateNote(
             widget.initialNote!.id!,
             userController.user.id!,
-            _contentTextController!.text!,
-            _titleTextController!.text!);
+            _contentTextController!.text,
+            _titleTextController!.text,
+            editNoteController.fileUrl);
         print('comethere');
-        Get.to(HomePage());
+        Get.to(const HomePage());
       } else {
         noteController.createNote(
-            NoteModel(_contentTextController?.text, _noteId,
-                _titleTextController?.text, Timestamp.fromDate(DateTime.now())),
+            NoteModel(
+              _contentTextController?.text,
+              _noteId,
+              _titleTextController?.text,
+              Timestamp.fromDate(DateTime.now()),
+              editNoteController.fileUrl,
+            ),
             userController.user.id!);
         Navigator.pop(context);
       }
-      //
-      // if (_noteId != null) {
-      //   Navigator.pop(context);
-      // }
     }
   }
 
@@ -102,6 +108,67 @@ class EditNotePageState extends State<EditNotePage> {
                 DateFormat('dd MMM y    h:mm a').format(DateTime.now()),
                 style: AppTextStyle.textLightPlaceholderS12,
               ),
+              const SizedBox(
+                height: 30,
+              ),
+              GetBuilder<EditNoteController>(builder: (_) {
+                return (_.fileUrl == '')
+                    ? GestureDetector(
+                        onTap: () async {
+                          final ImagePicker picker = ImagePicker();
+                          print('come heree');
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery);
+                          print('link : ${image?.path}');
+                          if (image?.path != '') {
+                            _.setFileUrl(image!.path);
+                          }
+                        },
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.only(right: 40),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                child: Image.asset(
+                                  AppImages.icUpload,
+                                  width: 60,
+                                ),
+                              ),
+                              Text(
+                                'Upload image ?',
+                                style: AppTextStyle.textLightPlaceholderS14,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        alignment: Alignment.center,
+                        child: Stack(children: [
+                          widget.initialNote?.imgUrl == ''
+                              ? Image.file(
+                                  File(_.fileUrl),
+                                  height: 300,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(
+                                  _.fileUrl,
+                                  height: 300,
+                                  fit: BoxFit.cover,
+                                ),
+                          IconButton(
+                            onPressed: () {
+                              _.setFileUrl('');
+                            },
+                            icon: Image.asset(
+                              AppImages.icCancel,
+                              height: 20,
+                            ),
+                          ),
+                        ]),
+                      );
+              }),
               TextFormField(
                 textAlign: TextAlign.start,
                 decoration: const InputDecoration(
