@@ -53,7 +53,7 @@ class Database {
           .doc(uid)
           .collection("notes")
           .doc(id)
-          .update({title: title, content: content});
+          .update({'title': title, 'content': content});
     } catch (e) {
       print(e);
       rethrow;

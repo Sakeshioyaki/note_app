@@ -4,11 +4,13 @@ import 'package:note_app/common/app_colors.dart';
 import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/controller/auth_controller.dart';
 
-class SignUp {
+class SignUp extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final controller = Get.find<AuthController>();
+
+  SignUp({super.key});
 
   @override
   Widget build(BuildContext context) {

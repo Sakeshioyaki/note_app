@@ -62,8 +62,9 @@ class AuthController extends GetxController {
           email: email, password: password);
       Get.find<UserController>().user =
           await Database().getUser(authResult.user!.uid);
-    } catch (firebaseAuthException) {
-      print('longingggg.. error');
+    } catch (e) {
+      print('Failed with error code: ${e}');
+      print(e.toString());
     }
     update();
   }

@@ -52,7 +52,8 @@ class NotePageState extends State<NotePage> {
               )),
               ListTile(
                 title: Text(
-                  DateFormat('dd MMM y    h:mm a').format(DateTime.now()),
+                  DateFormat('dd MMM y    h:mm a').format(
+                      widget.note?.dateCreated?.toDate() ?? DateTime.now()),
                   style: AppTextStyle.textLightPlaceholderS12,
                 ),
               ),

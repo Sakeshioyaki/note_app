@@ -58,6 +58,7 @@ class LoginPage extends StatelessWidget {
                 hintStyle: AppTextStyle.textLightPlaceholderS14,
               ),
               controller: passwordController,
+              obscureText: true,
             ),
             const SizedBox(height: 10),
             Row(
@@ -73,7 +74,7 @@ class LoginPage extends StatelessWidget {
                     style: AppTextStyle.textLightPlaceholderS14Bold,
                   ),
                   onPressed: () {
-                    Get.to(() => SignUp());
+                    Get.to(SignUp());
                   },
                 ),
               ],

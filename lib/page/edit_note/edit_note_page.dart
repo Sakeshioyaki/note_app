@@ -9,9 +9,9 @@ import 'package:note_app/common/app_images.dart';
 import 'package:note_app/common/app_text_styles.dart';
 import 'package:note_app/controller/note_controller.dart';
 import 'package:note_app/controller/user_controller.dart';
-import 'package:note_app/db/db.dart';
 import 'package:note_app/model/note_model.dart';
 import 'package:note_app/page/edit_note/edit_note_controller.dart';
+import 'package:note_app/page/home/pageHome.dart';
 
 class EditNotePage extends StatefulWidget {
   final NoteModel? initialNote;
@@ -47,12 +47,13 @@ class EditNotePageState extends State<EditNotePage> {
       _formKey.currentState!.save();
 
       if (widget.initialNote != null) {
-        await Database().updateNote(
+        await noteController.updateNote(
             widget.initialNote!.id!,
             userController.user.id!,
-            _titleTextController!.text!,
-            _contentTextController!.text!);
-        Navigator.pop(context);
+            _contentTextController!.text!,
+            _titleTextController!.text!);
+        print('comethere');
+        Get.to(HomePage());
       } else {
         noteController.createNote(
             NoteModel(_contentTextController?.text, _noteId,
@@ -60,10 +61,10 @@ class EditNotePageState extends State<EditNotePage> {
             userController.user.id!);
         Navigator.pop(context);
       }
-
-      if (_noteId != null) {
-        Navigator.pop(context);
-      }
+      //
+      // if (_noteId != null) {
+      //   Navigator.pop(context);
+      // }
     }
   }
 

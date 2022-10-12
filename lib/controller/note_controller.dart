@@ -31,6 +31,16 @@ class NoteController extends GetxController {
     update();
   }
 
+  updateNote(String id, String uid, String content, String tittle) async {
+    try {
+      await Database().updateNote(id, uid, tittle, content);
+    } catch (firebaseAuthException) {
+      print('bugg');
+    }
+    await getListNote(uid);
+    update();
+  }
+
   Future<void> getListNote(String uid) async {
     noteList = await Database().getListNote(uid);
   }
